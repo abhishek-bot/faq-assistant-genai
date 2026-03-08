@@ -20,7 +20,7 @@ This is Weekend 1 of my GenAI hackathon-style learning series.
 
 ## Setup
 ```bash
-git clone https://github.com/<your-username>/faq-assistant-genai.git
+git clone https://github.com/abhishek-bot/faq-assistant-genai.git
 cd faq-assistant-genai
 python -m venv venv
 .\venv\Scripts\activate   # Windows
