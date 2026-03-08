@@ -22,7 +22,7 @@ def normalize(text: str) -> str:
     return re.sub(r'[^a-z0-9\s]', '', text.lower().strip())
 
 
-def get_faq_answer(query:str, threshold:int = 50, return_info:bool = False):
+def get_faq_answer(query:str, threshold:int = 70, return_info:bool = False):
     """
     Search the FAQ table for a question that matches the user query.
     Currently uses a simple fuzzy matching.
@@ -37,17 +37,17 @@ def get_faq_answer(query:str, threshold:int = 50, return_info:bool = False):
     conn.close()   # Close the database connection
 
     if not faqs:
-        logger.warning("No FAQs found.")
+        logger.info("No FAQs found.")
         fallback = "Sorry, I couldn't find an answer to your question."   # Return a default message if no FAQs are found
         return (fallback, None) if return_info else fallback
     
     #Extract questions
-    questions = [(q) for (q,a) in faqs]   # Create a list of questions from the fetched FAQs
+    questions = [normalize(q) for (q,a) in faqs]   # Create a list of questions from the fetched FAQs
     normalized_query = normalize(query)
 
     # Use rapidfuzz to find the closest matching question
     match, score, idx = process.extractOne(normalized_query, questions)  # Get the closest match for the query from the list of questions
-    logger.debug(f"Best match: '{match}' with score {score} at index {idx}")  # Debug print to show the best match and its score
+    logger.info(f"Best match: '{match}' with score {score} at index {idx}")  # Debug print to show the best match and its score
     if match and score >= threshold:   # Check if the match is above the specified threshold
         matched_answer = faqs[idx][1]   # Return the corresponding answer if a good match is found
         return (matched_answer, (match, score)) if return_info else matched_answer
